@@ -94,7 +94,7 @@ contactForm.addEventListener("submit", function (event) {
         return;
     }
 
-    if (portfolioEmail === "your.email@example.com") {
+    if (portfolioEmail === "yveag98@gmail.com") {
         formStatus.textContent =
             "Your form works! Add your real email address in script.js " +
             "to enable email preparation.";
@@ -140,3 +140,158 @@ backToTop.addEventListener("click", function () {
         behavior: "smooth"
     });
 });
+
+
+
+// ===== 6. SCROLL REVEAL ANIMATION =====
+const revealElements = document.querySelectorAll(
+    ".section-heading, .education-card, .about-content, .skill-card, .project-card, .contact-card"
+);
+
+if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver(
+        function (entries, observer) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("revealed");
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        {
+            threshold: 0.15
+        }
+    );
+
+    revealElements.forEach(function (element) {
+        element.classList.add("reveal");
+        revealObserver.observe(element);
+    });
+} else {
+    revealElements.forEach(function (element) {
+        element.classList.add("revealed");
+    });
+}
+
+
+
+// ===== 7. ACTIVE NAVIGATION HIGHLIGHT =====
+const sections = document.querySelectorAll("section[id]");
+const navigationLinks = document.querySelectorAll("#nav-links a");
+
+const activeSectionObserver = new IntersectionObserver(
+    function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                navigationLinks.forEach(function (link) {
+                    link.classList.remove("active");
+
+                    if (
+                        link.getAttribute("href") ===
+                        "#" + entry.target.id
+                    ) {
+                        link.classList.add("active");
+                    }
+                });
+            }
+        });
+    },
+    {
+        threshold: 0.3
+    }
+);
+
+sections.forEach(function (section) {
+    activeSectionObserver.observe(section);
+});
+
+
+// ===== 8. PROJECT FILTER =====
+const filterButtons = document.querySelectorAll(".filter-btn");
+const projectCards = document.querySelectorAll(".project-card");
+
+filterButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        const selectedFilter = button.dataset.filter;
+
+        filterButtons.forEach(function (btn) {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        projectCards.forEach(function (card) {
+            const category = card.dataset.category;
+
+            if (selectedFilter === "all" || category === selectedFilter) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+});
+
+
+// ===== 9. COPY EMAIL BUTTON =====
+const copyEmailButton = document.getElementById("copy-email-btn");
+const copyEmailStatus = document.getElementById("copy-email-status");
+
+const portfolioContactEmail = "yveag8@gmail.com";
+
+if (copyEmailButton && copyEmailStatus) {
+    copyEmailButton.addEventListener("click", async function () {
+        try {
+            await navigator.clipboard.writeText(portfolioContactEmail);
+
+            copyEmailStatus.textContent = "Email copied successfully!";
+            copyEmailButton.textContent = "Copied! ✓";
+        } catch (error) {
+            copyEmailStatus.textContent =
+                "Unable to copy. Please copy yveag8@gmail.com manually.";
+        }
+    });
+}
+
+
+// ===== 10. SKILLS PROGRESS ANIMATION =====
+const skillProgressBars = document.querySelectorAll(
+    ".skill-progress-fill"
+);
+
+const skillsSection = document.getElementById("skills");
+
+if (skillsSection && skillProgressBars.length > 0) {
+    const skillsObserver = new IntersectionObserver(
+        function (entries, observer) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    skillProgressBars.forEach(function (bar) {
+                        const progress = Number(bar.dataset.progress);
+
+                        if (Number.isFinite(progress)) {
+                            const safeProgress = Math.min(
+                                100,
+                                Math.max(0, progress)
+                            );
+
+                            bar.style.setProperty(
+                                "--progress",
+                                safeProgress + "%"
+                            );
+
+                            bar.classList.add("animate");
+                        }
+                    });
+
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        {
+            threshold: 0.2
+        }
+    );
+
+    skillsObserver.observe(skillsSection);
+}
